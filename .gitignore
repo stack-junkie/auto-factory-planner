@@ -1,0 +1,7 @@
+/dist/
+__pycache__/
+*.pyc
+*.zip
+/factorio-*.log
+/saves/
+/script-output/
