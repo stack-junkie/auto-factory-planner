@@ -1,0 +1,9 @@
+{
+  "name": "auto-factory-planner",
+  "version": "0.3.41",
+  "title": "Auto Factory Planner",
+  "author": "DefGh",
+  "factorio_version": "2.1",
+  "description": "Public alpha. Generate production blueprints and manage upgradable factories with placed controllers. Rate targets, multi-product malls, researched recipes, direct insertion, stable inputs and optional roboport coverage. English and Russian UI. Space Age is optional.",
+  "dependencies": ["base >= 2.1.23"]
+}

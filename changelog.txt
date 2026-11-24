@@ -1,0 +1,536 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.3.41
+Date: 2026-11-17
+  Changes:
+    - Compare researched substations and ordinary poles for local supply without expanding the production footprint or replacing explicit pole choices.
+    - Replace neighbouring supply poles with a shared position and move supply coverage to shorten connections while preserving all consumers and occupied footprints.
+    - Reuse an intake connection within the selected supply pole's wire reach; invalidate old rate and mall previews.
+  Testing:
+    - Verify shared replacements, blocked tiles, opposing production banks, researched availability and complete coverage.
+    - Power the 60/min red-science factory with two production substations instead of seven supply poles; use eight power entities overall and measure 66 science/min.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.40
+Date: 2026-11-17
+  Changes:
+    - Remove redundant greedy supply poles and reuse nearby intake power connections.
+    - Join the closest electric network components before adding relay poles; use researched long-distance poles automatically when fewer relays are needed.
+    - Respect explicit pole choices, both endpoints' wire reach, occupied footprints and copper connection limits; preserve existing electric and circuit connections on reuse.
+    - Invalidate rate and mall previews so regenerated layouts include the optimized network.
+    - Keep nearest network edges in a bounded heap instead of allocating every pair of poles.
+  Testing:
+    - Verify insertion-order independence, disconnected existing poles, repeated reuse, mixed wire spans, explicit pole choices and complete consumer coverage.
+    - Check a dense 256-pole network; measure 66 science/min with 15 poles instead of 21 and a unit price of 138 instead of 144.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.39
+Date: 2026-11-17
+  Changes:
+    - Place shared-row input inserters at the same paired edges as their output hands, mirroring every second machine.
+    - Start additional input arms at the paired edge and fill inward when more transfer capacity is needed; end feeds at their actual last pickup.
+  Testing:
+    - Check adjacent input and output hands in mirrored pairs and preserve this arrangement in all four growth directions.
+    - Measure 66 science/min over ten minutes with 130 entities and a tier-adjusted unit price of 144.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.38
+Date: 2026-11-17
+  Changes:
+    - Alternate solid production cells in mirrored pairs, placing their output inserters next to each other between neighbouring machines.
+    - Mirror the ingredient and output slots of every second shared-row and central-belt cell; rebuild their feeds and collectors from the actual pickup and drop positions.
+  Testing:
+    - Check adjacent output hands in mirrored pairs of the 20/min and 60/min science factories.
+    - Validate mirrored pairs in all growth directions and incremental previews; measure 66 science/min with 131 entities, 270 tiles and a tier-adjusted unit price of 145.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.37
+Date: 2026-11-17
+  Changes:
+    - Multiply each successive transport tier's unit price by 1.5: base belts cost 1, each underground endpoint 3 and splitters 10; other entities remain 1.
+    - Rank distinct prototype speeds per transport family independently of research; equal-speed variants share one price and optional fourth tiers are included.
+    - Use fractional tier prices in layout scoring and compression rollback, update EN/RU help and invalidate old rate and mall previews.
+  Testing:
+    - Verify three transport families, each underground endpoint, optional fourth tiers, research-independent prices and rollback after fractional price increases.
+    - Retain the 133-entity 60/min science layout at a recalculated price of 151.5 units; measure 66 science/min over ten minutes.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.36
+Date: 2026-11-16
+  Changes:
+    - End unsplit forward collectors at their actual inserter drops instead of retaining a two-tile tail before the outlet.
+    - Place the central science export tunnel after neighbouring sections, choosing the shortest researched crossing with a free outlet and approach.
+    - Let compression reroute exports underneath upstream production instead of stopping at a trapped fixed tunnel exit.
+  Testing:
+    - Bring the 60/min science rows two tiles closer; reduce footprint from 300 to 280 tiles, entities from 141 to 133 and unit price from 153 to 141.
+    - Preserve the world input/output positions and measure 66 science/min over ten minutes after five minutes of warmup; verify both export lanes.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.35
+Date: 2026-11-16
+  Bugfixes:
+    - Transfer the complete reserved approach of each input/output socket to its connecting route, including the third protected tile of shared rows.
+    - Remove the U-shaped detour caused by treating the gear output's own reserved tile as an obstacle in the 60/min central-belt factory.
+  Testing:
+    - Require the 60/min gear feed to move towards its science consumers without returning against factory growth; retain the central belt pair, external export and four roboports.
+    - Remove four belts (145 to 141 entities, unit price 157 to 153) and measure 66 science/min over ten minutes after five minutes of warmup.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.34
+Date: 2026-11-16
+  Changes:
+    - Try two adjacent central belts between opposite production rows: one mixed ingredient feed and one shared export, served by ordinary and long-handed inserters.
+    - Check researched inserter reach and throughput before selecting this module; retain the existing layouts when long hands are unavailable or an inserter override is selected.
+    - Compare producer orientations and ingredient lane assignments, then compress and reroute the selected layout without an outer ingredient loop or splitter tree.
+  Bugfixes:
+    - Redraw earlier preview entities when final routing turns a connection or automatic belt sizing changes its prototype.
+  Testing:
+    - Reduce the 20/min red-science factory from 270 to 130 tiles, perimeter from 66 to 46 and entity count from 110 to 79; retain manual connections, four roboports and backward export.
+    - Measure 24 science/min at the external gateway over ten minutes, with both output lanes carrying 12/min.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.33
+Date: 2026-11-15
+  Changes:
+    - Remove the unused entrance bay before a compact solid-item producer with one ordinary ingredient feed.
+    - Connect the shared lane mixer directly to its splitter, reducing the feed height and allowing dependent rows to approach further.
+  Testing:
+    - Reduce the 20/min red-science factory footprint from 360 to 270 tiles, perimeter from 78 to 66 and entity count from 125 to 110; retain four roboports and backward export.
+    - Measure the external output over ten minutes after five minutes of warmup: 24 science/min.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.32
+Date: 2026-11-15
+  Changes:
+    - Send automatic item exports backwards against factory growth, beyond the entrance road, while preserving manual output positions.
+    - Reverse final shared collectors directly and align compatible banks at initial placement, avoiding a return loop around their rows.
+    - Redraw changed collectors in the construction preview.
+  Testing:
+    - Check backward external terminals in all growth directions, shared-belt lane loading, internal gear feeds and measured external output.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.31
+Date: 2026-11-15
+  Bugfixes:
+    - Extend automatic item exports beyond the allocated city block's perimeter road, including shared collectors in factories with internal intermediates.
+    - Preserve manually selected output locations and route automatic gateways after placing production.
+  Testing:
+    - Require a physical output belt beyond the road and measure production only at that external gateway.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.30
+Date: 2026-11-15
+  Bugfixes:
+    - Fix the primary city block to the world grid cell containing the factory controller, including negative coordinates and shifted roboport grids.
+    - Remove nearest-line rounding and whole-cell sidesteps near occupied roboport corners.
+    - Leave one tile between roads and production, and place the controller in a free inner corner of that service band when applying the plan.
+    - Reserve all four roboport corners and snap new controller blueprints inside the service band instead of onto a roboport pad.
+    - Reset negative production bounds correctly and allow identical deferred output sockets to join one collector.
+    - Route selected inputs outside the production strip after placing the body; reset obsolete automatic sockets after demolition while retaining manual selections.
+  Testing:
+    - Verify all growth directions, positive and negative cells, shifted grids, blocked-corner fallback, four roboports, road setback and stable placement after controller relocation.
+    - Replan a copy of the user's autosave and run a powered four-roboport factory for ten measured minutes: 24 red science/min against a 20/min target.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.29
+Date: 2026-11-15
+  Bugfixes:
+    - Retain opposite production banks and their common output belt when an ingredient is produced inside the factory.
+    - Feed compatible banks from one external or internal source per ingredient, mixing and branching once.
+    - Reserve a short dependency bay and prevent the shared mixer from moving upstream of its ingredient producer during compression.
+  Testing:
+    - Verify red science from copper and iron plates, internal gear capacity, input balance, dependency order and forward-only transport.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.28
+Date: 2026-11-15
+  Features:
+    - Face compatible production banks towards one common output belt, with opposite inserters loading its two lanes.
+    - Let compression join matching collector stripes while keeping machine, inserter and input footprints disjoint.
+    - Rebuild and merge deferred collectors after each bank move instead of routing two separate export lines around the factory.
+  Testing:
+    - Verify opposite-side drops, one shared collector, growth rotation, unchanged recipe capacity and native output on both belt lanes.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.27
+Date: 2026-11-15
+  Bugfixes:
+    - Mix compatible two-ingredient feeds once before distributing both lanes to neighbouring production banks.
+    - Select a shared splitter tree with short surface branches instead of independent crossed ingredient networks and repeated bank mixers.
+    - Rebuild the shared feed after compression moves while retaining lane demand and fixed external connections.
+  Testing:
+    - Verify one splitter, no underground belts, no backward growth segments, native output and incremental preview parity in the reported red-science save.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.26
+Date: 2026-11-15
+  Bugfixes:
+    - Compress individual production banks within one solid-item recipe, rebuilding their feeds and collectors after every move.
+    - Preserve machine counts and proportional bank demand; reserve the physical bank footprint instead of obsolete routing bays.
+    - Use compact turnable junctions and a shorter intake bay for single-recipe grid layouts.
+    - Keep bank routes clear of side roads and continue merged exports in the factory growth direction.
+    - Invalidate completed and in-progress previews generated before bank compression.
+  Testing:
+    - Verify single-recipe bank motion, unit-price rollback, synchronous/incremental parity and native throughput in a copy of the reported save.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.25
+Date: 2026-11-15
+  Features:
+    - Compress routed production layouts iteratively by moving production sections one tile closer, rebuilding connections and retaining the last non-increasing unit price.
+    - Price belts at 1, each underground-belt endpoint at 3, splitters at 10 and other entities at 1; exclude paving tiles.
+    - Show unit price and compression trial progress separately from entity count and the combined layout score.
+  Testing:
+    - Verify unit prices, rollback despite improved area, bounded placement, unchanged recipe capacity and native throughput after rerouting.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.24
+Date: 2026-11-15
+  Bugfixes:
+    - Match independent intermediate banks directly to their consumers, replacing shared merge-and-fork trees with local two-lane collectors and straight feeds.
+    - Allocate each producer bank from its consumer's demand and retain these per-machine rates in transport validation.
+    - Reduce spacing when independent banks no longer need a shared junction.
+  Testing:
+    - Verify independent engine feeds, no engine splitters, conserved recipe rates and native blue-science output.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.23
+Date: 2026-11-15
+  Features:
+    - Search layouts with divided intermediate production banks as well as divided final-product banks.
+  Bugfixes:
+    - Leave horizontal space for parallel banks of the same recipe instead of centering the first bank and pushing its neighbour downstream.
+    - Preserve the production frame bounds when retrying routes, preventing false width failures for controller previews shifted away from the origin.
+  Testing:
+    - Verify two-cell blue-science packing, unchanged recipe machine counts and measured output with divided engine-unit banks.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.22
+Date: 2026-11-15
+  Bugfixes:
+    - Reserve clearance for merge-and-fork junctions before placing downstream production banks, avoiding enclosed engine-unit connections in dense blue-science layouts.
+  Testing:
+    - Add a blue-science scenario with external plates, circuits and sulfur, positive coefficient sweeps, native candidate snapshots, throughput measurements and screenshot reports.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.21
+Date: 2026-11-15
+  Features:
+    - Add an in-game compression stage minimizing a weighted sum of city blocks, perimeter, area and entity count, with editable coefficients in Layout.
+    - Enable the roboport-sized factory grid and controller snapping before robotics research; reserve road corridors without placing locked roboports.
+    - Show the allocated grid and compression metrics in the preview and layout settings.
+  Testing:
+    - Verify weighted tradeoffs, entity counts, zero and fractional coefficients, grid phase, unchanged placement after research and early-game controller tools.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.20
+Date: 2026-11-15
+  Bugfixes:
+    - Fold growing item production into paired banks and bounded blocks, with compact upstream rows for intermediate recipes.
+    - Place shared forks along their consumers, allow immediate turns at empty collector sockets, and merge exports downstream.
+    - Prefer shorter production strips when comparing layouts; the area-only score no longer selects a stretched fallback over a compact candidate.
+  Testing:
+    - Check unchanged machine counts, bounded production banks, all four growth directions and native science throughput; add readable overview screenshots.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.19
+Date: 2026-11-14
+  Features:
+    - Pack eligible one-producer/two-consumer item chains into a direct-insertion cell, checking inserter capacity and retaining upstream-first placement.
+  Bugfixes:
+    - Remove unnecessary entrance and terminal margins from compact direct-feed cells; route their output collector beneath the producer where clearance permits.
+    - Save automatic routing sockets after positioning the production frame, preserving stable manual updates and automatic reset.
+  Testing:
+    - Reduce the small gear/science example from 26x16 to 15x13 tiles and from 67 to 44 entities; check all growth directions, grid roads, direct feeds, fixed manual sockets and native throughput.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.18
+Date: 2026-11-13
+  Bugfixes:
+    - Direct intermediate item collectors towards downstream production instead of returning to the entrance before routing to their consumers.
+    - Preserve shared collector lane balancing when reversing its outlet and include forward terminals in production clearance.
+  Testing:
+    - Reject backwards gear belts in all four growth directions, with and without grid roads, for single and shared gear-production rows; verify native science throughput and preview generation.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.17
+Date: 2026-11-13
+  Bugfixes:
+    - Align compact item rows with the selected factory growth direction, including multi-recipe chains.
+    - Place upstream production groups before their consumers along the growth direction, retaining compact placement for independent groups.
+    - Transform ingredient approaches and collector coordinates together with their production rows.
+  Testing:
+    - Verify actual science assembler coordinates and gear-before-science ordering in all four directions, native westward preview ghosts and simultaneous production throughput.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.16
+Date: 2026-11-13
+  Bugfixes:
+    - Position production from the controller and road boundaries before routing external connections; selected inputs and outputs no longer move the production body.
+    - Use the required intake clearance instead of an output-dependent offset, and compare production candidates independently of external connection lengths.
+    - Preserve automatic intake slots and input displays on repeated updates; restore automatic placement when a manual input is reset.
+  Testing:
+    - Check initial manual connections, moved sockets, saved project reloads, all eight legacy orientations, minimum fork clearance and native iron/oil throughput.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.15
+Date: 2026-11-13
+  Features:
+    - Replace main-bus direction and branch side controls with one factory growth direction selector; retain existing orientations until explicitly changed.
+    - Remember growth direction for new factories and preserve it in copied settings, blueprints and incremental generation.
+  Bugfixes:
+    - Align single-bank production with a selected manual output when entrance clearance allows it, avoiding a returning export belt.
+    - Let a free producer terminal turn directly towards its destination instead of forcing an extra outward step.
+  Testing:
+    - Reproduce the iron 1200/min factory with exact world sockets, assert its straight export, and check four growth directions and native UI persistence.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.14
+Date: 2026-11-13
+  Bugfixes:
+    - Clear trees and rocks only when their collision boxes obstruct a planned entity; preserve terrain in gaps and on roads.
+    - Cancel obsolete whole-plot terrain orders when loading pending factories or applying a revised plan.
+  Testing:
+    - Check rotated collision boxes, protected roadside trees, empty factory gaps, pending updates, saved queues and native robot mining.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.13
+Date: 2026-11-08
+  Features:
+    - Alternate fluid-only banks with matching inputs facing each other and share the intervening input and output headers, preserving balanced rates and fixed world connections.
+    - Tighten fluid row spacing with two-tile pipe tracks, direct nearby outlets and protected approaches for every oil fraction; retain existing world sockets during compact rebuilds.
+    - Prefer shorter fluid banks within the available roboport strip instead of extending shared pipes around unnecessarily narrow rows.
+    - Always pave four-tile roads on roboport grid centre lines, including crossings beneath the ports; retain material selection.
+    - Keep manual production rows and their intake forks behind the inner edge of the first grid road, preserving the selected world connections.
+    - Feed manual two-row intakes at the nearest row instead of overshooting to a central splitter and returning along a U-shaped branch.
+    - Search belt routes recursively with saved branch-and-bound frames, minimizing full occupied length before turns; underground spans count along their entire length.
+    - Check both supply and downstream demand in the forward capacity pass after routing, and record delivered flow and individual lane capacities.
+    - Keep balanced internal-product exports in compact layouts, and connect shared fluid groups through reachable exits while preserving belt approaches.
+    - Pack connected fluid recipes in two columns when this avoids extra grid rows; keep the first grid road before every factory entrance and prefer layouts with fewer roboports.
+    - Size large fluid banks to the plot, separate multi-output refinery rows, prevent pipes from routing back into their source network, and reserve all manually selected fluid outlets before routing.
+    - Add a craftable roboport grid reference tool and persist its selected origin in controller settings.
+  Bugfixes:
+    - Collect symmetric high-volume item rows from both ends into opposite lanes at a central outlet, avoiding a single-lane blue collector and its extra balancer.
+    - Mirror local priority taps towards their consumers to avoid returning around the export splitter.
+    - Prefer a straight producer approach when priority tap placements have the same total main-route length.
+    - Keep surface entities out of the side roads and reserve roboport footprints throughout routing and power placement.
+    - Place high-volume item exports near their producer, balance both belt lanes before a local priority consumer tap, and size the export with capacity margin.
+    - Isolate manually exported fluid intermediates with an outlet pump so cracking cannot starve the selected external output when a refinery co-product fills its pipe network.
+    - Complete every rectangular grid corner, reuse existing reference ports, and cap factory width by neighbouring roboport spacing.
+    - Route manual inputs directly to production banks, shorten two-row intake forks and connect manual outputs without redundant boundary stubs.
+    - Place new factories relative to selected input/output connections; snap only roboports to the world grid.
+    - Cover the fixed production plot for construction without recursively expanding roboport coverage.
+    - Preserve separate output lanes for large single-recipe factories and avoid retired input columns when rotating replacement factories.
+    - Normalize mirrored zero coordinates so optional roboports remain visible to pole placement.
+    - Size shared feeds for native near-lane pickup preference.
+    - Support four solid ingredients and reserve fluid intake clearance and sustained inserter capacity.
+    - Preserve fluid entrance headings across updates and complete previews after final output extensions.
+    - Continue single-step generation across rejected candidates and invalidate older generation caches.
+    - Keep high-rate direct insertion within supported machine ratios and preserve manual byproduct conversions in generation jobs.
+  Testing:
+    - Add a native advanced-oil scenario with six manual exports beyond the entrance road and simultaneous checks for gas 10000/min, light oil 1000/min, sulfur and plastic 900/min, lubricant and acid 60/min.
+    - Check shortest manual underground crossings, corridor turns, exact sockets and stable production during port moves.
+    - Validate iron rates above a whole belt with multiple input/output banks and native sustained throughput.
+    - Update native GUI regressions for the unified production screen and validate compact layouts through actual in-game throughput.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.12
+Date: 2026-11-08
+  Features:
+    - Merge product selection and chain editing into one Production tab with a plus button and icon grids for recipes and machines.
+    - Add recipe ingredients as external inputs immediately; click an ingredient to select its local production process.
+    - Separate byproducts between products and external inputs, with actions to export them or add consuming recipes.
+    - Split a byproduct between multiple recipes using manually specified source consumption rates per minute.
+  Improvements:
+    - Preserve conversions in controller settings, copied settings and blueprint metadata; validate and route their material balance.
+    - Keep mall stock targets and output chest selection on the unified production screen.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.11
+Date: 2026-11-07
+  Features:
+    - Show products and external inputs above compact production rows with recipe, machine, product and ingredient icons.
+    - Display machine counts and per-process production and consumption rates on icons, with exact values in tooltips.
+  Improvements:
+    - Keep recipe and machine editing on click, ingredient navigation, source selection and resource filters.
+    - Combine counts and rates across split production sections and rebuild older saved chain windows.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.10
+Date: 2026-11-07
+  Features:
+    - Hide reverse recycler recipes by default and add a Show recycling recipes checkbox in the production chain.
+    - Apply the checkbox to automatic recipe selection and save it in controller settings and blueprint metadata.
+  Bugfixes:
+    - Preserve previously selected recycling recipes when their list is hidden, with a notice in the chain editor.
+    - Keep asteroid crushing recipes and the recipe for building a recycler available normally.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.9
+Date: 2026-11-07
+  Features:
+    - Place and move individual belt and fluid connections on the map from the Layout tab, rotate their approach, or restore automatic placement.
+    - Preserve chosen world positions through recalculation and controller updates, with preview before applying changes.
+  Improvements:
+    - Keep production positions while routing manual connections, move their input labels and extend logistic coverage when needed.
+    - Preserve automatic connection anchors separately so moving a connection again or returning to automatic removes obsolete route extensions.
+    - Translate manual connection positions when copying settings to another controller.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.8
+Date: 2026-11-07
+  Improvements:
+    - Automatically size each individual belt and splitter for the local flow on each lane, allowing speed changes after pickups and merges.
+    - Use the slowest researched tier that carries the load; upgrade before splitting a stream into additional external belts.
+    - Size underground endpoints as matching pairs, accounting for tunnel length as well as throughput.
+    - Replace the global belt, underground and splitter selectors with automatic per-entity sizing in both rate factories and malls.
+  Bugfixes:
+    - Ignore obsolete global belt choices in saved configurations and preserve historical equipment when recovering old project entrances.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.7
+Date: 2026-11-07
+  Bugfixes:
+    - Retry overcrowded machine feeds with separate ingredient belts when mixed-belt inserters do not fit, fixing the seventeen-product mall.
+    - Retain this feed-capacity correction when reconstructing older mall entrances and branches.
+    - Report insufficient plot width before attempting impossible mall junctions.
+  Improvements:
+    - Automatically use researched power poles with better coverage and wire reach at the same footprint; explicit equipment choices remain honored.
+    - Reduce the tested seventeen-product mall from 46 small poles to 32 medium poles without increasing its 75 by 47 tile plot.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.6
+Date: 2026-11-07
+  Bugfixes:
+    - End ingredient belts at the last actual inserter pickup instead of the last machine's footprint.
+    - Trim unused collector tails in mixed item/fluid cells to the final output inserter's drop tile.
+    - Preserve final working pickup/drop tiles, underground pairs and external connections when shortening belts.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.5
+Date: 2026-11-07
+  Improvements:
+    - Choose power-pole positions by shared supply coverage instead of adding a nearby pole for each successive consumer.
+    - Reduce the tested 1800/min two-row iron-smelting factory from 74 medium poles to 33 while retaining full power and logistic coverage.
+  Bugfixes:
+    - Split a single ingredient near the entrance into short left and right feed branches, with one underground crossing of the central output.
+    - Remove return loops from the two-row inlet and shorten its reserved routing bay.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.4
+Date: 2026-11-07
+  Bugfixes:
+    - Place single-recipe item inputs on the entrance edge beside the final output, pointing into the selected branch.
+    - Keep routing and service buildings inside the entrance edge instead of extending the plot behind its input.
+    - Move old interior entrances to the existing plot edge once, then preserve their positions through repeated updates.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 2026-11-07
+  Bugfixes:
+    - Honor two-sided production for single-ingredient recipes, including iron smelting, with one central output conveyor.
+    - Run single-recipe item rows along the selected branch while keeping the intake header aligned with the main bus: east with right branches grows south.
+    - Extend the final item outlet to the plot edge and move its connection marker to the actual endpoint.
+    - Preserve fixed inputs while orienting local mixed-ingredient feeds and production cells.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: 2026-11-07
+  Bugfixes:
+    - Use both lanes of a single-recipe item collector before splitting its external interfaces into parallel belts.
+    - Keep 1800/min iron smelting on one red input belt and one output belt, with a straight collector and a local lane changer.
+    - Use the local single-recipe layout and its normal orientation even when compact layout search is disabled.
+    - Cover the complete plot, including its perimeter, with roboport logistic zones instead of construction zones.
+    - Start roboport placement with complete logistic cells to avoid redundant overlapping coverage.
+    - Invalidate previously calculated layouts so updates recalculate belt interfaces and logistic coverage.
+---------------------------------------------------------------------------------------------------
+Version: 0.3.1
+Date: 2026-11-07
+  Features:
+    - Add compact layout search for rate factories, comparing fully routed candidates by area and entity count.
+    - Support multiple rate targets with separate production rates in one shared factory.
+    - Build dense local item and fluid production blocks with direct insertion and local transport junctions.
+  Improvements:
+    - Enable compact layout search by default and account for researched inserter capacity.
+    - Preserve external input order and fixed connections while scaling and updating factories.
+    - Add native science-production regression fixtures, throughput measurements and example reports.
+  Bugfixes:
+    - Keep single-recipe factories in their normal orientation without a forced quarter-turn.
+    - Unload both banks of a two-row item production block onto one shared central conveyor.
+    - Protect local routing approaches and underground connections while compacting production blocks.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.29
+Date: 2026-11-01
+  Features:
+    - Add a Demolish button to every controller tab, with English and Russian labels.
+    - Cancel factory construction ghosts and queue native robot deconstruction of owned buildings and paving, keeping the controller and settings.
+  Improvements:
+    - Stop pending upgrades on demolition and allow reapplying a plan to recover matching objects before robots remove them.
+    - Show persistent demolition progress and completion without restarting factory construction.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.28
+Date: 2026-11-01
+  Features:
+    - Mark minable trees and rocks throughout a managed factory's plot, including its perimeter, for native robot deconstruction when applying or updating a plan.
+    - Resume factory construction automatically after terrain clearance; preserve the queue when editing a pending factory.
+  Improvements:
+    - Keep protected terrain and foreign buildings as conflicts, without issuing clearing orders for a rejected plan.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.27
+Date: 2026-11-01
+  Features:
+    - Plan ordinary mixed item/fluid chains as compact production groups without duplicating the entire factory for a busy intermediate.
+    - Feed researched underground belts through machine footprints, with pickup points between machines.
+    - Rotate fluid-processing machines to use side connections and route shared fluids to their actual consumers.
+  Improvements:
+    - Share small intermediate producers with their consumers and derive staggered direct-insertion banks from recipe rates and machine footprints.
+    - Group the recipe bus into four-belt blocks, retain input order and keep final output belts separate.
+    - Size shared fluid producers for the installed consumer capacity and distribute ordinary feeds without prioritizing one bank's initial belt fill.
+    - Keep mixed-chain inserter stack limits consistent with the capacity calculation across research levels.
+  Bugfixes:
+    - Reserve the complete inserter approach before selecting a generic machine port.
+    - Protect external input approaches and underground pairs while routing compact bus crossings.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.26
+Date: 2026-10-30
+  Features:
+    - Publish new versions to Mod Portal through its official API on pushes to main, with an Actions secret for the upload key.
+    - Replace long straight pipe runs with researched underground pipes while retaining surface junctions.
+  Improvements:
+    - Reduce machine spacing, branch corridors and rail length in mixed fluid/item production rows.
+    - Trim each fluid bus to its actual connections and use underground pipe segments in routed connections.
+  Bugfixes:
+    - Honor explicit fluidbox indices when selecting machines and connecting recipes, including basic oil processing.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.25
+Date: 2026-10-30
+  Changes:
+    - Removed automatic fallback to separate or generic rate-production layouts. Compact-layout errors now remain visible.
+    - Previously saved fallback strategies no longer force ordinary item chains into the old layout.
+  Bugfixes:
+    - Fixed early-game green science generation at 60/min without requiring upgraded underground belts.
+    - Size production rows for available inserter throughput before expanding direct-feed intermediates.
+    - Reject local output positions whose first belt step is blocked, and incompatible adjacent output collectors when grouping rows.
+    - Preserve direct copper cable insertion, including three-to-two production blocks.
+    - Split wide single-recipe production rows into compact sections within the plot width.
+    - Reserve output approaches before internal routing, including updates of old factories with fixed inputs.
+    - Reserve external input clearance from the first generation so identical robot-factory updates retain relay poles.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.24
+Date: 2026-10-29
+  Major Features:
+    - Prepared the first public alpha of Auto Factory Planner.
+  Compatibility:
+    - Removed the mandatory Space Age dependency. Requires Factorio 2.1.23 or newer in the 2.1 branch.
+    - Recipes and equipment are discovered from enabled recipes and researched technologies.
+  Info:
+    - Added the MIT license, release thumbnail, English/Russian quick start and public release documentation.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.23
+Date: 2026-10-28
+  Features:
+    - Added optional roboport construction coverage, connected logistics networks and power connections.
+    - Added native blueprint snapping based on the selected roboport's logistics coverage diameter.
+    - Added a controller placement blueprint with the same grid settings.
+  Bugfixes:
+    - Preserve the production layout strategy when adding service infrastructure or changing blueprint snapping.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.22
+Date: 2026-10-28
+  Features:
+    - Copy controller settings using the game's standard copy/paste settings gestures.
+    - Remember each player's last factory direction and branch side for new factories.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.21
+  Features:
+    - Added an explicit external supply button and automatic navigation to the next unresolved resource.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.20
+  Graphics:
+    - Added original controller artwork and inventory icon.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.19
+  Features:
+    - Extended compact mall layout rules to ordinary production chains.
+    - Keep a two-tile clear border regardless of optional perimeter paving.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.18
+  Gui:
+    - Added a searchable inline production-chain editor with immediate recipe, machine and source selection.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.17
+  Features:
+    - Added optional production rows on both sides of a shared local ingredient feed.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.16
+  Features:
+    - Group compatible recipes, share ingredient belts and prefer local intermediate transfers when feasible.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+  Major Features:
+    - Added placed factory controllers, multi-product malls, stock targets and managed factory updates.
+    - Added fixed plot width and construction/deconstruction orders.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+  Major Features:
+    - Initial development version: researched recipes, production rates, bus-based layouts and blueprint generation.

@@ -1,0 +1,14 @@
+Auto Factory Planner
+Copyright (c) 2026 DefGh
+Code, documentation and original controller/thumbnail artwork: MIT License (see LICENSE).
+
+The factory-controller artwork was created for this mod with an AI image-generation tool.
+The thumbnail is an original vector schematic; its editable source is art/thumbnail.svg.
+
+Factorio is a game by Wube Software Ltd. Factorio game assets visible in the gallery
+remain the property of Wube Software Ltd. The mod references installed base-game assets;
+it does not include a copy of the game or claim ownership of Wube assets.
+Screenshot fixtures use scripted resource/energy injection for demonstration and testing.
+Normal gameplay still requires the player to provide resources, power and construction materials.
+
+This mod is not an official Wube Software product.
