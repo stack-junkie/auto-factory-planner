@@ -173,7 +173,20 @@ local function refresh_products(p,s)
   View.filter(p,s)
 end
 function UI.open(p)
-  local s=state(p);Mall.migrate(s);initialise_ui(p,s);clear_marks(s)
+  local s=state(p)
+  if s.project_id then
+    local project=storage.afp_projects and storage.afp_projects[s.project_id]
+    if not (project and project.anchor and project.anchor.valid) then
+      invalidate(s)
+      s.project_id=nil
+      s.project_revision=nil
+      s.project_settings_revision=nil
+      s._project=nil
+      s.ui_tab='layout'
+      s.error=T('detached-draft')
+    end
+  end
+  Mall.migrate(s);initialise_ui(p,s);clear_marks(s)
   if not ui_sessions[p.index] then
     s.ui_translation_pending={};s.ui_translation_names={};ui_sessions[p.index]=true
   end
@@ -578,8 +591,17 @@ function UI.changed(e)
   elseif a=='mall-chest' then
     invalidate(s);s.infrastructure.chest=s.chest_options[el.selected_index] or nil;UI.open(p)
   elseif a=='width' then
-    invalidate(s);local value=tonumber(el.text);s.max_width=value and value>0 and value or nil
-    if s.roboports and s.max_width then s.max_width=math.min(s.max_width,Grid.width(s)or s.max_width);el.text=tostring(s.max_width)end
+    invalidate(s)
+    local value=tonumber(el.text)
+    s.max_width=value and value>0 and value or nil
+    local span=Grid.width(s)
+    if (s.roboports or s.snap_grid) and value and (value==0 or (span and value>span)) then
+      s.roboports=false
+      s.snap_grid=false
+      UI.open(p)
+      View.body(p.gui.screen.afp,s).width_row.children[2].focus()
+      return
+    end
   elseif a=='paving-enabled' then
     if Paving.grid_roads(s)then el.state=true;return end
     invalidate(s)
@@ -598,7 +620,13 @@ function UI.changed(e)
   elseif a=='compression-weight'then
     invalidate(s);s.compression_weights=s.compression_weights or{};s.compression_weights[t.key]=tonumber(el.text);s.phase='ports'
   elseif a=='layout-search'then invalidate(s);s.layout_search=el.state;s.phase='ports'
-  elseif a=='roboports'or a=='snap-grid'then invalidate(s);s[a=='roboports'and'roboports'or'snap_grid']=el.state;s.phase='ports'
+  elseif a=='roboports'or a=='snap-grid'then
+    invalidate(s)
+    s[a=='roboports' and 'roboports' or 'snap_grid']=el.state
+    if el.state then s.max_width=Paving.maximum(s) end
+    s.phase='ports'
+    UI.open(p)
+    return
   elseif a=='direction' or a=='side' then invalidate(s);s[a]=el.selected_index;Preferences.remember(p.index,s);s.phase='ports'
   elseif a=='growth-direction'then invalidate(s);s.growth_direction=el.selected_index;Preferences.remember(p.index,s);s.phase='ports'
   elseif a=='infrastructure' then invalidate(s);s.infrastructure[t.key]=s.infra_options[t.key][el.selected_index] or nil;s.phase='ports'

@@ -161,8 +161,11 @@ function V.resources(c,s)return Chain.resources(c,s)end
 function V.chain(parent,p,c,s,width)return Chain.render(parent,p,c,s,width)end
 function V.layout(parent,p,c,s,width)
   title(parent,T('layout-title'))
+  local width_row=parent.add{type='flow',name='width_row'}
+  label(width_row,T(s.mode=='mall' and 'mall-width-label' or 'width-label'))
+  local input=field(width_row,Paving.maximum(s) or 0,'width')
+  input.tooltip=T('width-grid-hint',Grid.width(s) or Projects.default_width())
   if s.project_id then
-    local row=parent.add{type='flow'};label(row,T(s.mode=='mall' and 'mall-width-label' or 'width-label'));field(row,s.roboports and math.min(s.max_width or math.huge,Grid.width(s)or math.huge)or s.max_width or 0,'width')
     local reference,port=Projects.default_width(s.infrastructure and s.infrastructure.roboport or s.grid_anchor and s.grid_anchor.name)
     if reference then V.button(parent,T('roboport-width',reference),'roboport-width').tooltip=T('roboport-width-hint',port.localised_name,U.fmt(port.logistic_radius*2))end
   end
