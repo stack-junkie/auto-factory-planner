@@ -695,7 +695,13 @@ function N.begin(c,s,plan,equipment,turns,mirror)
     -- A cell builder can protect a longer approach than this route needs.
     -- Transfer the entire socket reservation, including its unused tail,
     -- so a connection does not detour around its own reserved cells.
-    if p.id then for cell,owner in pairs(g.reserved)do if owner==p.id then g.reserved[cell]=id end end end
+    -- Splitter junctions share one reservation across several sockets.
+    -- Each connection may claim its approach below, but not the whole junction.
+    if p.id and not p.id:match('^junction/') then
+      for cell,owner in pairs(g.reserved) do
+        if owner==p.id then g.reserved[cell]=id end
+      end
+    end
     for step=0,compact_items and 1 or 3 do local x,y=p.x+G.dx[d+1]*step,p.y+G.dy[d+1]*step;local cell=G.cell(x,y)
       if not g.occupied[cell]then
         local old=g.reserved[cell]
