@@ -130,9 +130,48 @@ local function build(c,s,n,pool,equipment,order,maximum,alternate,facing)
   for _,arm in ipairs(C.options(c,'inserter',function(v)return v.get_inserter_rotation_speed('normal')end))do
     if I.supported(arm)and math.floor(-arm.inserter_pickup_position[2]+.5)==2 and math.floor(arm.inserter_drop_position[2]+.5)==2 and(not override or override==arm.name)then long[#long+1]=arm end
   end
-  local groups={};for i=1,#inputs,2 do local group={keys={},rate=0,rates={}}
-    for j=i,math.min(i+1,#inputs)do local v=inputs[j];group.keys[#group.keys+1]=v.key;group.rate=group.rate+v.rate;group.rates[v.key]=v.rate end
-    groups[#groups+1]=group
+  -- The water inlet occupies one inserter tile on the machine edge. Choose
+  -- which ingredients share a belt by the arms needed on the two feeds.
+  -- Keep the existing lane order on ties.
+  local split=2
+  if #inputs>=3 and #long>0 then
+    local function arms_needed(arms,items)
+      local rate,best=0,0
+      for _,item in ipairs(items)do rate=rate+item.rate end
+      for _,candidate in ipairs(arms)do
+        local capacity=math.huge
+        for _,item in ipairs(items)do
+          capacity=math.min(capacity,I.capacity(candidate,c,item.key,#items))
+        end
+        best=math.max(best,capacity)
+      end
+      return best>0 and math.ceil(rate/best-eps) or math.huge
+    end
+    local best=math.huge
+    local original=inputs
+    local function try(first,second)
+      local near,far={},{}
+      for i,item in ipairs(original)do
+        local feed=(i==first or i==second)and near or far
+        feed[#feed+1]=item
+      end
+      if #far>2 then return end
+      local slots=arms_needed(pool,near)+arms_needed(long,far)
+      if slots>=best then return end
+      best=slots;split=#near;inputs=near
+      for _,item in ipairs(far)do inputs[#inputs+1]=item end
+    end
+    try(1,2)
+    for first=1,#original do
+      try(first,nil)
+      for second=first+1,#original do try(first,second) end
+    end
+  end
+  local groups={};for i=1,#inputs do
+    local index=i<=split and 1 or 2
+    if not groups[index]then groups[index]={keys={},rate=0,rates={}}end
+    local group=groups[index];local item=inputs[i]
+    group.keys[#group.keys+1]=item.key;group.rate=group.rate+item.rate;group.rates[item.key]=item.rate
   end
   local lane=equipment.belt.belt_speed*14400
   local maximum=math.min(n.count,maximum)
@@ -146,6 +185,8 @@ local function build(c,s,n,pool,equipment,order,maximum,alternate,facing)
   local bank_count=math.ceil(n.count/maximum);local per_bank=math.ceil(n.count/bank_count);local done,top=0,0
   local fluid_outputs=0;for key in pairs(n.output)do if U.split(key)=='fluid'then fluid_outputs=fluid_outputs+1 end end
   local track_offset=s._shape_rows=='spaced'and 4 or(#groups==0 and #outputs==0 and 2 or 3)
+  -- Keep the underground pipe exit beyond the outermost ingredient belt.
+  track_offset=math.max(track_offset,#groups+2)
   local track_pitch=s._shape_rows=='spaced'and 3 or 2
   -- Leave one empty tile between the last input pipe and the next bank's
   -- outer output pipe. Underground mouths face their own tracks, so they

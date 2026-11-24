@@ -76,7 +76,7 @@ local function reset(s)
     end
     return
   end
-  local n={x=s.from.x,y=s.from.y,d=s.from.d or 4,forced=s.from.d~=nil,g=0}
+  local n={x=s.from.x,y=s.from.y,d=s.from.d or 4,forced=s.from.d~=nil and not (s.kind=="item" and s.from.turnable),g=0}
   n.f=math.abs(n.x-s.to.x)+math.abs(n.y-s.to.y);push(s.h,n)
 end
 function R.begin(from,to,kind,key,belt,underground,id,merge,network,bridge)
@@ -140,7 +140,20 @@ function R.advance(g,s,budget)
     U.fail("route",U.name(type(key)=='table'and key[1]or key))
   end
   if not free(from.x,from.y) or not free(to.x,to.y) then fail("endpoint") end
-  if kind=='item'then return Recursive.advance(g,s,budget,free,fail)end
+  if kind=='item' and not s.frontier_search then
+    -- Keep short, tidy routes from the existing search. On a congested bus,
+    -- switch to the saved priority queue instead of revisiting the same
+    -- prefixes under successively larger turn and length bounds.
+    local remaining=math.min(2048,math.floor(s.limit/3))-s.pops
+    if remaining>0 then
+      return Recursive.advance(g,s,math.min(remaining,budget),free,fail)
+    end
+    s.frontier_search=true
+    s.recursive=nil
+    local spent=s.pops
+    reset(s)
+    s.pops=spent
+  end
   local goal
   for _=1,budget do
     if #s.h==0 then fail("blocked") end
@@ -149,7 +162,7 @@ function R.advance(g,s,budget)
     local n=pop(s.h);local nk=statekey(n.x,n.y,n.d,n.forced)
     if not s.best[nk] or n.g<=s.best[nk]+1e-6 then
       s.cursor={x=n.x,y=n.y}
-      if mergeable(n.x,n.y) or n.x==to.x and n.y==to.y and (not to.d or not s.strict_terminal and not n.forced or n.d==to.d) then goal=n;break end
+      if mergeable(n.x,n.y) or n.x==to.x and n.y==to.y and (not to.d or kind=="item" and to.turnable or not s.strict_terminal and not n.forced or n.d==to.d) then goal=n;break end
       for d=0,3 do if (n.d==4 or d~=(n.d+2)%4) and (not n.forced or d==n.d) then
         local dx,dy=G.dx[d+1],G.dy[d+1]
         local function offer(len,tunnel)
