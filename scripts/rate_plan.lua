@@ -22,6 +22,40 @@ function P.accepts(plan,s)
   end
   return true
 end
+-- A shared belt feeds both ingredients through the same row of inserters.
+-- Size that row after direct insertion and belt partitions have been assigned.
+local function size_mixed_feeds(c,s,plan,belt)
+  local pool
+  local lane_capacity=belt.belt_speed*14400
+  for _,node in ipairs(plan.nodes)do
+    local inputs=U.sorted(node.input)
+    local a,b=inputs[1],inputs[2]
+    if #inputs==2 and U.split(a)=='item' and U.split(b)=='item'
+      and not plan.direct_keys[a] and not plan.direct_keys[b]
+      and U.split(next(node.output))=='item' and #U.sorted(node.output)==1 then
+      local rate_a=node.crafts*node.input[a]
+      local rate_b=node.crafts*node.input[b]
+      if math.max(rate_a,rate_b)<=lane_capacity+1e-6 then
+        pool=pool or I.short_options(c,s)
+        local arm=pool[#pool]
+        local slots=c.machines[node.machine].tile_width
+        local capacity=slots*math.min(I.capacity(arm,c,a,2),I.capacity(arm,c,b,2))
+        local count=math.ceil((rate_a+rate_b)/capacity-1e-8)
+        if count>node.count then
+          if plan.full_belt_collectors then
+            local key=next(node.output)
+            if node.output[key]*node.crafts>lane_capacity+1e-6 and count%2==1 then count=count+1 end
+          end
+          if count>300 then U.fail('too-large') end
+          for key,amount in pairs(node.input)do
+            plan.flows[key].seed=plan.flows[key].seed+amount*(count-node.count)
+          end
+          node.count=count
+        end
+      end
+    end
+  end
+end
 function P.prepare(c,s,plan)
   if plan.rate_search then return plan end
   plan.rate_search=true;plan.sections=1;plan.local_items={}
@@ -101,6 +135,7 @@ function P.prepare(c,s,plan)
       end
     end
   end
+  size_mixed_feeds(c,s,plan,belt)
   return plan
 end
 return P

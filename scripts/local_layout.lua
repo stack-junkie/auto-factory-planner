@@ -27,13 +27,6 @@ local function point(x,y,d,id)return{x=x,y=y,d=d,plain=true,id=id}end
 local function position(p,turns,mirror)
   local x,y=U.rotate(p.x+.5,mirror and -p.y-.5 or p.y+.5,turns);return{x=x,y=y}
 end
-local function arms(c,s)
-  local result={};local override=s.infrastructure and s.infrastructure.inserter
-  for _,p in ipairs(C.options(c,'inserter',function(v)return v.get_inserter_rotation_speed('normal')end))do
-    if I.supported(p)and math.floor(-p.inserter_pickup_position[2]+.5)==1 and math.floor(p.inserter_drop_position[2]+.5)==1 and(not override or override==p.name)then result[#result+1]=p end
-  end
-  if #result==0 then U.fail('missing-infrastructure','inserter')end;return result
-end
 local function intersect(a,b,gap)
   return a.x0<b.x1+gap and b.x0<a.x1+gap and a.y0<b.y1+gap and b.y0<a.y1+gap
 end
@@ -43,7 +36,7 @@ function N.begin(c,s,plan,equipment,turns,mirror)
   local spaced=s._shape_rows=='spaced'
   local gap_x,gap_y=spaced and 14 or 8,spaced and 7 or 3
   local events,connections,parts,groups={},{},{},{}
-  local order=Intake.order(s,plan);local pool=arms(c,s);local byid,used={},{}
+  local order=Intake.order(s,plan);local pool=I.short_options(c,s);local byid,used={},{}
   local balanced_items={};local cheapest=C.options(c,'transport-belt',function(p)return p.belt_speed end)[1]
   for key,flow in pairs(plan.flows)do if U.split(key)=='item'and flow.internal_export and(flow.supply or 0)>cheapest.belt_speed*14400 then balanced_items[key]=true end end
   for _,n in ipairs(plan.nodes)do if n.direct_fanout then Arrangement.order(plan);break end end

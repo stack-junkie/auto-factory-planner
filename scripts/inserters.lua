@@ -1,3 +1,4 @@
+local C=require('scripts.catalogue')
 local U=require('scripts.util')
 local I={}
 function I.capacity(p,c,key,ingredients)
@@ -18,5 +19,18 @@ function I.supported(p)
   local a,b=p.inserter_pickup_position,p.inserter_drop_position
   return not p.burner_prototype and a and b and math.abs(a[1])<0.1 and math.abs(b[1])<0.1 and a[2]<-0.9 and b[2]>0.9
     and math.abs(-a[2]-math.floor(-a[2]+0.5))<0.3 and math.abs(b[2]-math.floor(b[2]+0.5))<0.3
+end
+function I.short_options(c,s)
+  local selected=s.infrastructure and s.infrastructure.inserter
+  local options=C.options(c,'inserter',function(p)return p.get_inserter_rotation_speed('normal')end)
+  local pool={}
+  for _,arm in ipairs(options)do
+    if I.supported(arm) and math.floor(-arm.inserter_pickup_position[2]+.5)==1
+      and math.floor(arm.inserter_drop_position[2]+.5)==1 and (not selected or selected==arm.name) then
+      pool[#pool+1]=arm
+    end
+  end
+  if #pool==0 then U.fail('missing-infrastructure','inserter') end
+  return pool
 end
 return I
